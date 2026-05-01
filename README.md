@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="logo.png" alt="Gemini Bug Bounty Logo" width="320"/>
-</p>
+
 
 <div align="center">
 
