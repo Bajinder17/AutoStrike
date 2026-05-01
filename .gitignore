@@ -1,0 +1,45 @@
+# Sensitive output — never commit these
+findings/
+recon/
+reports/
+hunt-memory/
+config.json
+*.burp
+*.json.bak
+
+# API keys and tokens
+.env
+secrets.txt
+api_keys.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Linux
+*~
+*.swp
+
+# Logs
+*.log
+*.txt.bak
+
+# Tool output
+*.out
+nmap-output/
+
+# Gemini CLI local data
+.gemini/
+audit_target/bsc-genesis-contract/
+chainlink-solana-audit/
+poc_workspace/
+snowbridge/
+standalone_poc/
+suilend_repo/
