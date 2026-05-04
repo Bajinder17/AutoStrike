@@ -123,6 +123,105 @@ for i in "${!GO_TOOLS[@]}"; do
     fi
 done
 
+# ─── Mobile Security Tools ─────────────────────────────────────────────
+echo ""
+echo "[*] Installing mobile security tools..."
+
+# apktool
+if command -v apktool &>/dev/null; then
+    log_ok "apktool already installed"
+else
+    echo "    Installing apktool..."
+    if [ "$OS_TYPE" = "darwin" ]; then
+        brew install apktool 2>/dev/null && log_ok "apktool installed" || log_err "apktool failed"
+    else
+        sudo apt-get install -y -qq apktool 2>/dev/null && log_ok "apktool installed" || log_err "apktool failed — install from https://ibotpeaches.github.io/Apktool/"
+    fi
+fi
+
+# jadx
+if command -v jadx &>/dev/null; then
+    log_ok "jadx already installed"
+else
+    echo "    Installing jadx..."
+    if [ "$OS_TYPE" = "darwin" ]; then
+        brew install jadx 2>/dev/null && log_ok "jadx installed" || log_err "jadx failed"
+    else
+        JADX_VERSION=$(curl -sI https://github.com/skylot/jadx/releases/latest | grep -i '^location:' | grep -oP 'v[\d.]+' || echo "v1.5.1")
+        JADX_URL="https://github.com/skylot/jadx/releases/download/${JADX_VERSION}/jadx-${JADX_VERSION#v}-no-jdk-linux-amd64.zip"
+        if curl -sL "$JADX_URL" -o /tmp/jadx.zip && \
+           unzip -qo /tmp/jadx.zip -d /tmp/jadx && \
+           { sudo mv /tmp/jadx/bin/jadx /usr/local/bin/jadx 2>/dev/null || mv /tmp/jadx/bin/jadx "$HOME/bin/jadx"; }; then
+            rm -rf /tmp/jadx.zip /tmp/jadx
+            log_ok "jadx installed"
+        else
+            rm -rf /tmp/jadx.zip /tmp/jadx
+            log_err "jadx failed — install from https://github.com/skylot/jadx"
+        fi
+    fi
+fi
+
+# Frida + objection (Python)
+if command -v frida &>/dev/null; then
+    log_ok "frida already installed"
+else
+    echo "    Installing frida-tools + objection..."
+    pip3 install -q frida-tools objection 2>/dev/null && \
+        log_ok "frida-tools + objection installed" || \
+        log_err "frida/objection failed — pip3 install frida-tools objection"
+fi
+
+# ─── Source Code Audit Tools ──────────────────────────────────────────
+echo ""
+echo "[*] Installing source code audit tools..."
+
+# Semgrep
+if command -v semgrep &>/dev/null; then
+    log_ok "semgrep already installed"
+else
+    echo "    Installing semgrep..."
+    pip3 install -q semgrep 2>/dev/null && log_ok "semgrep installed" || log_err "semgrep failed"
+fi
+
+# trufflehog
+if command -v trufflehog &>/dev/null; then
+    log_ok "trufflehog already installed"
+else
+    echo "    Installing trufflehog..."
+    if [ "$OS_TYPE" = "darwin" ]; then
+        brew install trufflehog 2>/dev/null && log_ok "trufflehog installed" || log_err "trufflehog failed"
+    else
+        curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin 2>/dev/null && \
+            log_ok "trufflehog installed" || log_err "trufflehog failed"
+    fi
+fi
+
+# gitleaks
+if command -v gitleaks &>/dev/null; then
+    log_ok "gitleaks already installed"
+else
+    echo "    Installing gitleaks..."
+    go install github.com/gitleaks/gitleaks/v8@latest 2>/dev/null && \
+        log_ok "gitleaks installed" || log_err "gitleaks failed"
+fi
+
+# gosec (Go SAST)
+if command -v gosec &>/dev/null; then
+    log_ok "gosec already installed"
+else
+    echo "    Installing gosec..."
+    go install github.com/securego/gosec/v2/cmd/gosec@latest 2>/dev/null && \
+        log_ok "gosec installed" || log_err "gosec failed"
+fi
+
+# bandit (Python SAST)
+if python3 -c "import bandit" 2>/dev/null; then
+    log_ok "bandit already installed"
+else
+    echo "    Installing bandit..."
+    pip3 install -q bandit 2>/dev/null && log_ok "bandit installed" || log_err "bandit failed"
+fi
+
 # ─── nmap (system package) ─────────────────────────────────────────────
 echo ""
 echo "[*] Checking nmap..."
@@ -208,7 +307,7 @@ echo "============================================="
 echo "[*] Installation Verification"
 echo "============================================="
 
-ALL_TOOLS=(subfinder httpx dnsx nuclei katana ffuf nmap gau dalfox anew qsreplace assetfinder gf waybackurls interactsh-client subjack sisakulint)
+ALL_TOOLS=(subfinder httpx dnsx nuclei katana ffuf nmap gau dalfox anew qsreplace assetfinder gf waybackurls interactsh-client subjack sisakulint apktool jadx frida objection semgrep trufflehog gitleaks gosec)
 INSTALLED=0
 MISSING=0
 

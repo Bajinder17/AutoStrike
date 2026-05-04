@@ -10,7 +10,7 @@ You are a professional bug bounty hunting AI assistant. This repo is your knowle
 
 ---
 
-## Skills (9 domains — reference docs in `skills/`)
+## Skills (12 domains — reference docs in `skills/`)
 
 | Skill | Location | Domain |
 |---|---|---|
@@ -23,6 +23,9 @@ You are a professional bug bounty hunting AI assistant. This repo is your knowle
 | Meme Coin Audit | `skills/meme-coin-audit/SKILL.md` | Meme coin rug pull detection, token authority checks |
 | Report Writing | `skills/report-writing/SKILL.md` | H1/Bugcrowd/Intigriti/Immunefi report templates, CVSS 3.1 |
 | Triage Validation | `skills/triage-validation/SKILL.md` | 7-Question Gate, 4 gates, never-submit list |
+| Android Security | `skills/android-security/SKILL.md` | 20 Android bug classes — APK reversing, deep links, WebView, StrandHogg, PendingIntent, fragment injection, Frida, drozer. Assets: Play Store, .apk |
+| iOS Security | `skills/ios-security/SKILL.md` | 18 iOS bug classes — IPA reversing, URL schemes, Keychain, ATS, biometric bypass, Universal Links, IPC, objection. Assets: App Store, TestFlight, .ipa |
+| Source Code Audit | `skills/source-code-audit/SKILL.md` | 8-phase code audit — dangerous functions, auth mapping, SAST, taint analysis |
 
 **When the user asks about any of these topics, read the corresponding SKILL.md file for detailed instructions.**
 
@@ -48,6 +51,9 @@ Gemini CLI doesn't have native slash commands. Instead, respond to these natural
 | `remember` or `save finding` | Log finding to hunt memory. Read `commands/remember.md`. |
 | `intel <target>` | Fetch CVE + disclosure intel. Read `commands/intel.md`. |
 | `token scan <contract>` | Meme coin/token rug pull scanner. Read `commands/token-scan.md`. |
+| `android hunt <app>` | Android app vulnerability hunting. Read `commands/android-hunt.md`. |
+| `ios hunt <app>` | iOS app vulnerability hunting. Read `commands/ios-hunt.md`. |
+| `audit code <repo>` | Source code security audit. Read `commands/audit-code.md`. |
 
 **When the user triggers any of these, read the corresponding command file for the full procedure.**
 
@@ -67,12 +73,15 @@ When running complex workflows, adopt these specialized roles as needed:
 | **Autopilot** | Autonomous hunt loop | `agents/autopilot.md` |
 | **Recon Ranker** | Attack surface ranking from recon output | `agents/recon-ranker.md` |
 | **Token Auditor** | Meme coin/token rug pull analysis | `agents/token-auditor.md` |
+| **Android Auditor** | Android APK security analysis | `agents/android-auditor.md` |
+| **iOS Auditor** | iOS IPA security analysis | `agents/ios-auditor.md` |
+| **Code Auditor** | Source code security audit | `agents/code-auditor.md` |
 
 ---
 
 ## Rules (ALWAYS ACTIVE — read these files at session start)
 
-- `rules/hunting.md` — 20 critical hunting rules
+- `rules/hunting.md` — 24 critical hunting rules
 - `rules/reporting.md` — 12 report quality rules
 
 ### Critical Rules Summary

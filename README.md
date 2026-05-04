@@ -27,9 +27,9 @@
 <br>
 
 ```
-  14 command triggers  ·  8 AI agent roles  ·  9 skill domains
-  20 web2 vuln classes  ·  10 web3 bug classes
-  Burp MCP  ·  HackerOne MCP  ·  Autonomous Mode
+  17 command triggers  ·  11 AI agent roles  ·  12 skill domains
+  20 web2 vuln classes  ·  10 web3 bug classes  ·  12 Android + 10 iOS bug classes
+  Source code auditing  ·  Burp MCP  ·  HackerOne MCP  ·  Autonomous Mode
 ```
 
 </div>
@@ -127,9 +127,9 @@ This port adapts the Claude Code architecture to Gemini CLI's context system:
 | **MCP** | Native integration | Gemini CLI MCP support (if available) |
 
 ### What's Preserved
-- ✅ All 9 skill domains with full content
-- ✅ All 14 command procedures (as reference docs)
-- ✅ All 8 agent role definitions
+- ✅ All 12 skill domains with full content (web2, web3, Android, iOS, source code audit)
+- ✅ All 17 command procedures (as reference docs)
+- ✅ All 11 agent role definitions
 - ✅ All 24 Python/shell tools
 - ✅ All hunting rules and reporting rules
 - ✅ Wordlists, payloads, docs
@@ -167,6 +167,9 @@ This port adapts the Claude Code architecture to Gemini CLI's context system:
 | `triage` | Quick 2-minute go/no-go check |
 | `web3 audit <contract>` | Smart contract security audit |
 | `token scan <contract>` | Meme coin/token rug pull scanner |
+| `android hunt <app>` | Android APK security testing |
+| `ios hunt <app>` | iOS IPA security testing |
+| `audit code <repo>` | Source code security audit |
 
 <br>
 
@@ -176,7 +179,7 @@ This port adapts the Claude Code architecture to Gemini CLI's context system:
 
 ## AI Agent Roles
 
-8 specialized roles, each for one job:
+11 specialized roles, each for one job:
 
 | Agent | What It Does |
 |:---|:---|
@@ -188,6 +191,9 @@ This port adapts the Claude Code architecture to Gemini CLI's context system:
 | **autopilot** | Runs the whole hunt loop autonomously |
 | **recon-ranker** | Ranks attack surface by priority |
 | **token-auditor** | Meme coin / token rug pull analysis |
+| **android-auditor** | Android APK reversing + 12 bug classes |
+| **ios-auditor** | iOS IPA reversing + 10 bug classes |
+| **code-auditor** | Source code audit — 8-phase methodology |
 
 <br>
 

@@ -193,12 +193,19 @@ Client -> CDN -> Load Balancer -> App Server -> Database
 | paramspider | URL parameter mining | `pip3 install paramspider` |
 | kiterunner | API endpoint brute | `go install github.com/assetnote/kiterunner/cmd/kr@latest` |
 | cloudenum | Cloud asset enumeration | `pip3 install cloud_enum` |
-| trufflehog | Secret scanning | `brew install trufflehog` |
-| gitleaks | Secret scanning | `brew install gitleaks` |
+| trufflehog | Secret scanning (git history) | `brew install trufflehog` |
+| gitleaks | Secret scanning | `go install github.com/gitleaks/gitleaks/v8@latest` |
 | XSStrike | Advanced XSS scanner | `pip3 install xsstrike` |
 | SecretFinder | JS secret extraction | `pip3 install secretfinder` |
 | sqlmap | SQL injection | `pip3 install sqlmap` |
 | subzy | Subdomain takeover | `go install github.com/LukaSikic/subzy@latest` |
+| apktool | Android APK decompiler | `apt install apktool` |
+| jadx | Android APK → Java source | `brew install jadx` |
+| frida | Mobile runtime hooking | `pip3 install frida-tools` |
+| objection | Mobile exploration toolkit | `pip3 install objection` |
+| semgrep | Pattern-based SAST | `pip3 install semgrep` |
+| gosec | Go security scanner | `go install github.com/securego/gosec/v2/cmd/gosec@latest` |
+| bandit | Python security scanner | `pip3 install bandit` |
 
 ## Static Analysis (Semgrep Quick Audit)
 ```bash
@@ -392,6 +399,8 @@ grep -rn "\.unwrap()\|\.expect(" --include="*.rs" | grep -v "test\|encode\|to_by
 grep -rn "unsafe {" --include="*.rs" -B5 | grep "read\|recv\|parse\|decode"
 grep -rn "as u8\|as u16\|as u32\|as usize" --include="*.rs" | grep -v "checked\|saturating\|wrapping"
 ```
+
+> **For the complete 8-phase source code audit methodology** (route-auth mapping, dependency scanning, Semgrep SAST, diff auditing, taint analysis, and language-specific patterns for Python, JavaScript, Java, Go, PHP, Ruby, C/C++), see **`skills/source-code-audit/SKILL.md`**.
 
 ---
 
@@ -779,12 +788,35 @@ SMUGGLED
 Frontend reads Content-Length: 13 -> sends all. Backend reads Transfer-Encoding -> sees chunk "0" = end -> "SMUGGLED" left in buffer -> next user's request poisoned.
 
 ## Android / Mobile Hunting
-- [ ] Certificate pinning bypass (Frida/objection)
-- [ ] Exported activities/receivers (AndroidManifest.xml)
-- [ ] Deep link injection
-- [ ] Shared preferences / SQLite in cleartext
-- [ ] WebView JavaScript bridge
-- [ ] Mobile API often uses older/different API version than web
+
+> **For the complete 12-class Android methodology**, see **`skills/android-security/SKILL.md`**.
+> **For the complete 10-class iOS methodology**, see **`skills/ios-security/SKILL.md`**.
+
+### Android Quick Checklist
+- [ ] APK decompiled (`apktool d target.apk` + `jadx -d target_java/ target.apk`)
+- [ ] Hardcoded secrets grepped + access tested
+- [ ] AndroidManifest.xml — exported components, deep link schemes, debuggable flag
+- [ ] Deep links fuzzed (`adb shell am start -a android.intent.action.VIEW -d "scheme://..."`)
+- [ ] WebView configs checked (`addJavascriptInterface`, `setAllowUniversalAccessFromFileURLs`)
+- [ ] Content providers tested for SQLi / path traversal
+- [ ] Certificate pinning bypassed (`objection -g com.target.app explore -c "android sslpinning disable"`)
+- [ ] SharedPreferences + SQLite inspected for plaintext tokens
+- [ ] Logcat monitored for sensitive data leakage
+
+### iOS Quick Checklist
+- [ ] IPA extracted and reversed (`class-dump`, `strings`)
+- [ ] Info.plist — URL schemes, ATS exceptions, permissions
+- [ ] Hardcoded secrets in binary strings
+- [ ] URL scheme hijacking tested
+- [ ] apple-app-site-association verified
+- [ ] Keychain dump — access control levels (`objection -g com.target.app explore`)
+- [ ] SSL pinning bypassed, traffic intercepted
+- [ ] Binary protections checked (PIE, canaries, ARC)
+
+### Mobile API ≠ Web API
+- Mobile apps often hit `/api/v1/` while web uses `/api/v2/` (older = less secure)
+- Mobile may use device tokens instead of session cookies — different auth model
+- Look for mobile-only endpoints: `/api/mobile/`, `/api/app/`, `/m/api/`
 
 ## CI/CD Pipeline
 - [ ] GitHub Actions: `pull_request_target` with checkout of PR code

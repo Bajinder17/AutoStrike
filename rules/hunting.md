@@ -190,3 +190,60 @@ echo "SAMLResponse_VALUE" | base64 -d | xmllint --format -
 ```
 
 > SAML bugs frequently pay High–Critical because they enable SSO bypass across the entire platform.
+
+## 21. ANDROID = DECOMPILE FIRST, ASK QUESTIONS LATER
+
+Every Android APK in scope should be decompiled before any live testing:
+
+```bash
+apktool d target.apk -o target_smali/
+jadx -d target_java/ target.apk
+grep -rn "api_key\|secret\|AKIA\|firebase" target_java/ --include="*.java" --include="*.xml"
+```
+
+Priority order: secrets → deep links → WebView → exported components → storage.
+Read `skills/android-security/SKILL.md` for full 12-class methodology.
+
+## 22. iOS = CHECK URL SCHEMES + ATS BEFORE DYNAMIC
+
+Before spending time on jailbreak/Frida setup:
+
+```bash
+unzip target.ipa -d extracted/
+plutil -p extracted/Payload/App.app/Info.plist | grep -A5 "CFBundleURLSchemes"
+plutil -p extracted/Payload/App.app/Info.plist | grep -A10 "NSAppTransportSecurity"
+strings extracted/Payload/App.app/App | grep -iE "api_key|secret|token|AKIA"
+```
+
+If no URL schemes + ATS properly configured + no secrets in strings → low ROI, move on.
+Read `skills/ios-security/SKILL.md` for full 10-class methodology.
+
+## 23. SOURCE CODE = GREP DANGEROUS FUNCTIONS IN FIRST 15 MINUTES
+
+When source code is available (open source, leaked, or white-box program):
+
+```bash
+# Universal dangerous function scan
+grep -rn "eval(\|exec(\|system(\|pickle\.loads\|unserialize(\|ObjectInputStream" \
+  --include="*.py" --include="*.js" --include="*.java" --include="*.php" --include="*.go"
+
+# Route-auth mapping — find the one route without auth
+grep -rn "router\.\(get\|post\|put\|delete\)" --include="*.js" | grep -v "auth\|authenticate"
+```
+
+Source code audit always outperforms black-box testing — 3x more bugs found per hour.
+Read `skills/source-code-audit/SKILL.md` for full 8-phase methodology.
+
+## 24. MOBILE API ≠ WEB API
+
+Mobile apps often hit different API endpoints, older API versions, or have weaker auth:
+
+```bash
+# After cert pinning bypass + Burp intercept:
+# 1. Compare mobile API endpoints vs web JS bundle endpoints
+# 2. Mobile often uses /api/v1/ while web upgraded to /api/v2/
+# 3. Mobile may send device tokens instead of session cookies — different auth model
+# 4. Look for mobile-only endpoints: /api/mobile/, /api/app/, /m/api/
+```
+
+Test BOTH surfaces. The mobile API is frequently the least reviewed.
